@@ -1,18 +1,20 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 class MapInterface
 {
     public:
         virtual void put(const std::string& key, const std::string& value) = 0;
         virtual void remove(const std::string& key) = 0;
-        virtual std::string get(const std::string& key) = 0;
-        virtual int size() = 0;
-        virtual bool isEmpty() = 0;
+        virtual std::string get(const std::string& key) const = 0;
+        virtual int size() const = 0;
+        virtual bool isEmpty() const = 0;
         virtual void clear() = 0;
         virtual std::string toString() = 0;
 };
+
 class MyMap : MapInterface
 {
     private:
@@ -25,9 +27,9 @@ class MyMap : MapInterface
     public:
         void put(const std::string& key, const std::string& value) override;
         void remove(const std::string& key) override;
-        std::string get(const std::string& key) override;
-        int size() override;
-        bool isEmpty() override;
+        std::string get(const std::string& key) const override;
+        int size() const override;
+        bool isEmpty() const override;
         void clear() override;
         std::string toString() override;
 };
@@ -59,28 +61,13 @@ int main()
 
 void MyMap::put(const std::string& key, const std::string& value) 
 {
-    bool ifKeyExist = false;
-    int keyIndex = -1;
-    for (size_t i = 0; i < m_keyAndValues.size(); i++)
+    auto it = std::find_if(m_keyAndValues.begin(), m_keyAndValues.end(), [&key](const KeyValPair& obj) { return obj.key == key; });
+    if (it != m_keyAndValues.end())
     {
-        if (m_keyAndValues[i].key == key)
-        {
-            ifKeyExist = true;
-            keyIndex = i;
-            break;
-        }
+        (*it).value = value;
+        return;
     }
-    if (ifKeyExist == true)
-    {
-        m_keyAndValues[keyIndex].value = value;
-    }
-    else
-    {
-        KeyValPair putKeyValPair;
-        putKeyValPair.key = key;
-        putKeyValPair.value = value;
-        m_keyAndValues.push_back(putKeyValPair);
-    }
+    m_keyAndValues.push_back({key,value});
 }
 
 void MyMap::remove(const std::string& key)
@@ -106,7 +93,7 @@ void MyMap::remove(const std::string& key)
     }
 }
 
-std::string MyMap::get(const std::string& key) 
+std::string MyMap::get(const std::string& key) const
 {
     bool ifKeyExist = false;
     int keyIndex = -1;
@@ -130,12 +117,12 @@ std::string MyMap::get(const std::string& key)
     }
 }
 
-int MyMap::size() 
+int MyMap::size() const
 {
     return m_keyAndValues.size();
 }
         
-bool MyMap::isEmpty() 
+bool MyMap::isEmpty() const 
 {
     return m_keyAndValues.empty();
 }
