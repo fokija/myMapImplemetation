@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <sstream>
 
 class MapInterface
 {
@@ -64,7 +65,7 @@ void MyMap::put(const std::string& key, const std::string& value)
     auto it = std::find_if(m_keyAndValues.begin(), m_keyAndValues.end(), [&key](const KeyValPair& obj) { return obj.key == key; });
     if (it != m_keyAndValues.end())
     {
-        (*it).value = value;
+        it->value = value;
         return;
     }
     m_keyAndValues.push_back({key,value});
@@ -72,20 +73,10 @@ void MyMap::put(const std::string& key, const std::string& value)
 
 void MyMap::remove(const std::string& key)
 {
-    bool ifKeyExist = false;
-    int keyIndex = -1;
-    for (size_t i = 0; i < m_keyAndValues.size(); i++)
+    auto it = std::find_if(m_keyAndValues.begin(), m_keyAndValues.end(), [&key](const KeyValPair& obj) { return obj.key == key; });
+    if (it != m_keyAndValues.end())
     {
-        if (m_keyAndValues[i].key == key)
-        {
-            ifKeyExist = true;
-            keyIndex = i;
-            break;
-        }
-    }
-    if (ifKeyExist == true)
-    {
-        m_keyAndValues.erase(m_keyAndValues.begin() + keyIndex);
+         m_keyAndValues.erase(it);
     }
     else
     {
@@ -95,25 +86,15 @@ void MyMap::remove(const std::string& key)
 
 std::string MyMap::get(const std::string& key) const
 {
-    bool ifKeyExist = false;
-    int keyIndex = -1;
-    for (size_t i = 0; i < m_keyAndValues.size(); i++)
+    auto it = std::find_if(m_keyAndValues.begin(), m_keyAndValues.end(), [&key](const KeyValPair& obj) {return obj.key == key;});
+    if (it != m_keyAndValues.end())
     {
-        if (m_keyAndValues[i].key == key)
-        {
-            ifKeyExist = true;
-            keyIndex = i;
-            break;
-        }
-    }
-
-    if (ifKeyExist == true)
-    {
-        return m_keyAndValues[keyIndex].value;
+        return it->value;
     }
     else
     {
-        return "Key doesn't exist!";
+        std::cout << "Key doesn't exist!";
+        return "";
     }
 }
 
@@ -129,15 +110,15 @@ bool MyMap::isEmpty() const
 
 void MyMap::clear() 
 {
-    m_keyAndValues.erase(m_keyAndValues.begin(), m_keyAndValues.end());
+    m_keyAndValues.clear();
 }
 
 std::string MyMap::toString()
 {
-    std::string printString;
-    for (size_t i = 0; i < m_keyAndValues.size(); i++)
+    std::stringstream ss;
+    for (auto x : m_keyAndValues)
     {
-        printString += "{ " + m_keyAndValues[i].key + " : " + m_keyAndValues[i].value + " }\n";
+        ss << "{ " << x.key << " : " << x.value << " }\n";
     }
-    return printString;
+    return ss.str();
 }
