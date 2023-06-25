@@ -73,10 +73,10 @@ void MyMap::put(const std::string& key, const std::string& value)
 
 void MyMap::remove(const std::string& key)
 {
-    auto it = std::find_if(m_keyAndValues.begin(), m_keyAndValues.end(), [&key](const KeyValPair& obj) { return obj.key == key; });
-    if (it != m_keyAndValues.end())
+    auto removeKeyEnd = std::remove_if(m_keyAndValues.begin(), m_keyAndValues.end(), [&key](const KeyValPair& obj) { return obj.key == key; });
+    if (removeKeyEnd != m_keyAndValues.end())
     {
-         m_keyAndValues.erase(it);
+        m_keyAndValues.erase(removeKeyEnd, m_keyAndValues.end());
     }
     else
     {
