@@ -7,6 +7,7 @@
 class MapInterface
 {
     public:
+        MapInterface() { std::cout << "I am printing-MapInterface \n";}
         virtual void put(const std::string& key, const std::string& value) = 0;
         virtual void remove(const std::string& key) = 0;
         virtual std::string get(const std::string& key) const = 0;
@@ -26,6 +27,7 @@ class MyMap : MapInterface
         };
         std::vector<KeyValPair> m_keyAndValues;
     public:
+        MyMap() { std::cout << "I am printing-MyMap \n";}
         void put(const std::string& key, const std::string& value) override;
         void remove(const std::string& key) override;
         std::string get(const std::string& key) const override;
